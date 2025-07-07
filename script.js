@@ -18,44 +18,62 @@ menu.addEventListener('mouseleave', () => {
     tooltip.classList.remove('show');
 });
 
-
 let addBtn = document.querySelector('.addBtn');
 let taskInput = document.querySelector('.taskInput');
 let todoList = document.querySelector('.todoList');
 
-function addTask() {
-    let taskText = taskInput.value.trim();
-    if (taskText !== '') {
+let tasks = [];
+
+function renderTasks() {
+    todoList.innerHTML = '';
+
+    tasks.forEach((task, index) => {
         let itemDiv = document.createElement('div');
         itemDiv.className = 'product-item';
 
         let li = document.createElement('li');
-        li.innerHTML = `${taskText}`;
+        li.textContent = task;
 
         let deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Видалити';
         deleteBtn.className = 'btn-delete';
+        deleteBtn.setAttribute('data-index', index);
+
         itemDiv.appendChild(li);
         itemDiv.appendChild(deleteBtn);
         todoList.appendChild(itemDiv);
+    });
+}
+
+function addTask() {
+    let taskText = taskInput.value.trim();
+    if (taskText !== '') {
+        tasks.push(taskText);
         taskInput.value = '';
+        renderTasks();
     }
 }
 
-addBtn.addEventListener('click', () => {
-    addTask();
-});
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    renderTasks();
+}
+
+
+addBtn.addEventListener('click', addTask);
 
 taskInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         addTask();
     }
+});
 
-    todoList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-delete')) {
-            e.target.closest('.product-item').remove();
-        }
-    })
+
+todoList.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-delete')) {
+        let index = e.target.getAttribute('data-index');
+        deleteTask(index);
+    }
 });
 
 
